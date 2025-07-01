@@ -1,9 +1,13 @@
+import os
 import csv
 
 def load_jobs(file_path="jobs.csv"):
     jobs = []
+    # ✅ Make path absolute: from current script's folder
+    abs_path = os.path.join(os.path.dirname(__file__), file_path)
+
     try:
-        with open(file_path, newline='', encoding='utf-8') as csvfile:
+        with open(abs_path, newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 job = {
@@ -13,12 +17,9 @@ def load_jobs(file_path="jobs.csv"):
                 }
                 jobs.append(job)
     except FileNotFoundError:
-        print(f"File not found: {file_path}")
-    return jobs
+        print(f"❌ File not found: {abs_path}")
+    except Exception as e:
+        print("❌ Error reading jobs.csv:", e)
 
-# Sample test
-if __name__ == "__main__":
-    job_list = load_jobs()
-    for job in job_list:
-        print(f"Job ID: {job['job_id']}, Title: {job['title']}")
-        print(f"Description: {job['description']}\n")
+    print(f"✅ Total jobs loaded: {len(jobs)}")
+    return jobs
